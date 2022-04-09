@@ -13,9 +13,12 @@ import axios from "../plugins/axios";
 export default Vue.extend({
   async mounted() {
     const { data } = await axios.post("/orders/confirm", {
-      source: this.$route.query.source,
+      session_id: this.$route.query.session_id,
     });
-    console.log(data);
+      // console.log(source)
+    // await console.log(data);
+     console.log(this.$route.query);
   },
 });
+console.log('hi');
 </script>

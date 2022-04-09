@@ -1,11 +1,9 @@
 <template>
+
   <div class="container">
     <div class="py-5 text-center">
       <h2>Welcome</h2>
-      <p class="lead">
-        {{ user.first_name }} {{ user.last_name }} has invited you to buy these
-        item(s)!
-      </p>
+      <p class="lead">{{ user.first_name }} {{ user.last_name }} has invited you to buy these item(s)!</p>
     </div>
 
     <div class="row">
@@ -15,28 +13,19 @@
         </h4>
         <ul class="list-group mb-3">
           <template v-for="product in products">
-            <li
-              class="list-group-item d-flex justify-content-between lh-condensed"
-            >
+            <li class="list-group-item d-flex justify-content-between lh-condensed">
               <div>
                 <h6 class="my-0">{{ product.title }}</h6>
                 <small class="text-muted">{{ product.description }}</small>
               </div>
               <span class="text-muted">${{ product.price }}</span>
             </li>
-            <li
-              class="list-group-item d-flex justify-content-between lh-condensed"
-            >
+            <li class="list-group-item d-flex justify-content-between lh-condensed">
               <div>
                 <h6 class="my-0">Quantity</h6>
               </div>
 
-              <input
-                v-model="quantities[product.id]"
-                type="number"
-                min="0"
-                class="text-muted form-control quantity"
-              />
+              <input v-model="quantities[product.id]" type="number" min="0" class="text-muted form-control quantity"/>
             </li>
           </template>
 
@@ -52,102 +41,47 @@
           <div class="row">
             <div class="col-md-6 mb-3">
               <label for="firstName">First name</label>
-              <input
-                v-model="first_name"
-                type="text"
-                class="form-control"
-                id="firstName"
-                placeholder="First Name"
-                required
-              />
+              <input v-model="first_name" type="text" class="form-control" id="firstName" placeholder="First Name"
+                     required>
             </div>
             <div class="col-md-6 mb-3">
               <label for="lastName">Last name</label>
-              <input
-                v-model="last_name"
-                type="text"
-                class="form-control"
-                id="lastName"
-                placeholder="Last Name"
-                required
-              />
+              <input v-model="last_name" type="text" class="form-control" id="lastName" placeholder="Last Name"
+                     required>
             </div>
           </div>
 
           <div class="mb-3">
             <label for="email">Email</label>
-            <input
-              v-model="email"
-              type="email"
-              class="form-control"
-              id="email"
-              placeholder="you@example.com"
-              required
-            />
+            <input v-model="email" type="email" class="form-control" id="email" placeholder="you@example.com" required>
           </div>
 
           <div class="mb-3">
             <label for="address">Address</label>
-            <input
-              v-model="address"
-              type="text"
-              class="form-control"
-              id="address"
-              placeholder="1234 Main St"
-              required
-            />
+            <input v-model="address" type="text" class="form-control" id="address" placeholder="1234 Main St" required>
           </div>
 
           <div class="mb-3">
-            <label for="address2"
-              >Address 2 <span class="text-muted">(Optional)</span></label
-            >
-            <input
-              v-model="address2"
-              type="text"
-              class="form-control"
-              id="address2"
-              placeholder="Apartment or suite"
-            />
+            <label for="address2">Address 2 <span class="text-muted">(Optional)</span></label>
+            <input v-model="address2" type="text" class="form-control" id="address2" placeholder="Apartment or suite">
           </div>
 
           <div class="row">
             <div class="col-md-5 mb-3">
               <label for="country">Country</label>
-              <input
-                v-model="country"
-                type="text"
-                class="form-control"
-                id="country"
-                placeholder="Country"
-              />
+              <input v-model="country" type="text" class="form-control" id="country" placeholder="Country">
             </div>
             <div class="col-md-4 mb-3">
               <label for="city">City</label>
-              <input
-                v-model="city"
-                type="text"
-                class="form-control"
-                id="city"
-                placeholder="City"
-              />
+              <input v-model="city" type="text" class="form-control" id="city" placeholder="City">
             </div>
             <div class="col-md-3 mb-3">
               <label for="zip">Zip</label>
-              <input
-                v-model="zip"
-                type="text"
-                class="form-control"
-                id="zip"
-                placeholder="Zip"
-                required
-              />
+              <input v-model="zip" type="text" class="form-control" id="zip" placeholder="Zip" required>
             </div>
           </div>
 
-          <button class="btn btn-primary btn-lg btn-block" type="submit">
-            Continue to checkout
-          </button>
+          <button class="btn btn-primary btn-lg btn-block" type="submit">Continue to checkout</button>
         </form>
       </div>
     </div>
@@ -155,44 +89,51 @@
 </template>
 
 <script>
-import Vue from "vue";
-import axios from "../plugins/axios";
-
+import Vue from 'vue'
+import axios from '../plugins/axios';
 export default Vue.extend({
   async asyncData(ctx) {
-    const { data } = await axios.get(`/links/${ctx.params.code}`);
+    // await console.log(`/links/${ctx.params.code}`);
+    try{
+        const {data} = await axios.get(`/links/${ctx.params.code}`);
+        console.log(data);
+          const user = data.user;
 
-    const user = data.data.user;
-
-    const products = data.data.products;
+    const products = data.products;
 
     const quantities = [];
 
-    products.forEach((p) => (quantities[p.id] = 0));
+    products.forEach(
+      p => quantities[p.id] = 0
+    );
     return {
       user,
       products,
-      quantities,
-    };
+      quantities
+    }
+    }catch(e){
+        console.error(e.response.data);
+    }
+  
   },
   data() {
     return {
       user: null,
       products: [],
       quantities: [],
-      first_name: "",
-      last_name: "",
-      email: "",
-      address: "",
-      address2: "",
-      country: "",
-      city: "",
-      zip: "",
-    };
+      first_name: '',
+      last_name: '',
+      email: '',
+      address: '',
+      address2: '',
+      country: '',
+      city: '',
+      zip: '',
+    }
   },
   methods: {
     async submit() {
-      const { data } = await axios.post("/orders", {
+      const {data} = await axios.post('/orders', {
         first_name: this.first_name,
         last_name: this.last_name,
         email: this.email,
@@ -202,31 +143,37 @@ export default Vue.extend({
         city: this.city,
         zip: this.zip,
         code: this.$route.params.code,
-        items: this.products.map((p) => {
+        items: this.products.map(p => {
           return {
             product_id: p.id,
-            quantity: this.quantities[p.id],
-          };
-        }),
+            quantity: this.quantities[p.id]
+          }
+        })
       });
+      // console.log(data);
+      // localStorage.setItem('data',data);
+      // await console.log(data);
 
-      await this.$stripe.import().redirectToCheckout({
+      await this.$stripe.redirectToCheckout({
         sessionId: data.id,
       });
-    },
+    }
+
   },
   computed: {
     total() {
       let total = 0;
 
-      this.products.forEach((p) => {
-        total += p.price * this.quantities[p.id];
-      });
+      this.products.forEach(
+        p => {
+          total += p.price * this.quantities[p.id]
+        }
+      );
 
       return total;
-    },
-  },
-});
+    }
+  }
+})
 </script>
 
 <style scoped>
